@@ -1,0 +1,54 @@
+{% include "home/layout/layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    
+    <div class="row justify-content-center">
+        
+        <div class="col-md-6">
+            <div style="display: none" class="alert alert-danger" role="alert" id = 'alert'>
+                
+            </div>
+            <div style="display: none" class="alert alert-success" role="alert" id = 'alerts'>
+                
+            </div>
+            <h1 class="text-center mb-4">Create Quiz</h1>
+                <div class="form-group">
+                    <label for="quizName">Quiz Name</label>
+                    <input type="text" class="form-control" id="quizName" placeholder="Enter quiz name">
+                </div>
+
+                <div class="form-group">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="alwaysActive" checked>
+                        <label class="custom-control-label" for="alwaysActive">Always Active</label>
+                    </div>
+                </div>
+                <div class="form-group" id="dateTimeFields" style = "display: none">
+                    <label for="fromDateTime">From Date-Time</label>
+                    <input type="datetime-local" class="form-control" id="fromDateTime">
+                    <label for="toDateTime">To Date-Time</label>
+                    <input type="datetime-local" class="form-control" id="toDateTime">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="create_btn">Create Quiz</button>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+        
+{% block script %}
+
+
+<script>
+    document.getElementById('alwaysActive').addEventListener('change', function() {
+        var dateTimeFields = document.getElementById('dateTimeFields');
+        if (this.checked) {
+            dateTimeFields.style.display = 'none';
+        } else {
+            dateTimeFields.style.display = 'block';
+        }
+    });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js">
+</script>
+{% include 'quiz_creator/create_quiz_ajax.html' %}
+{% endblock script %}

@@ -1,0 +1,27 @@
+<script type="text/javascript">
+$(document.documentElement).on("click","#create_btn",function(){
+    let quiz_name = $("#quizName").val();
+    let active = $("#alwaysActive").is(":checked");
+    let from_date = $("#fromDateTime").val();
+    let to_date = $("#toDateTime").val();
+    
+    $.ajax({
+        type:"POST",
+        url:{% url 'check_quiz_name' %},
+        data : {
+            "quiz_name":quiz_name,
+            "active":active,
+            "from_date":from_date,
+            "to_date":to_date
+        },
+        success: function(data){
+            console.log(data);
+            if(data.status == "success"){
+                $("#alerts").text("Quiz creation Done").show();
+            }else if(data.status == "Fail"){
+                $("#alert").text("Quiz creation failed").show();
+            }
+        }
+    })
+})
+</script>

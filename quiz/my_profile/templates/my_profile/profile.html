@@ -1,0 +1,39 @@
+{% include "home/layout/layout.html" %}
+{% block style %}
+<style>
+    .card div {
+        padding: 2%;
+    }
+</style>
+{% endblock style %}
+{% block content %}
+<div style="display: flex;">
+    <div style="flex: 1; overflow-y: auto; padding: 2.5%;">
+        <!-- Left Div for Quiz Creation -->
+        {% for i in data %}
+        <div class="card">
+            <div>
+                <a href="/quiz_detail/{{i.id}}"><h2>{{i.name}}</h2></a>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    <div style="flex: 1; overflow-y: auto; padding: 2.5%;">
+        <!-- Right Div for Quiz Attempts -->
+        <div class="card">
+            <div><form action="POST"></form>
+                <h2>Sample Card</h2>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+{% endblock script %}

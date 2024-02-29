@@ -12,6 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 
 def login_view(request):
+    redirect_to = request.GET.get('next', 'home')
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -20,12 +21,13 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect(redirect_to)
+            
         else:
-            return render(request, '../templates/home/login.html', {'form': form})
+            return render(request, '../templates/home/login.html', {'form': form, 'next': redirect_to})
     else:
         form = AuthenticationForm()
-        return render(request, '../templates/home/login.html', {'form': form})
+        return render(request, '../templates/home/login.html', {'form': form, 'next': redirect_to})
 
 def logout_view(request):
     logout(request)

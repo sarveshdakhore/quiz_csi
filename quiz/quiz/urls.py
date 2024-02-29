@@ -22,4 +22,6 @@ from django.urls import include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path( "", include('home.urls')),
+    path("", include('quiz_creator.urls')),
+    path("", include('my_profile.urls')),
 ]

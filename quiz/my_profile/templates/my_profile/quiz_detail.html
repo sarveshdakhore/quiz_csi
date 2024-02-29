@@ -1,0 +1,134 @@
+{% include "home/layout/layout.html" %}
+{% block style %}
+<style>
+.option {
+    display: flex;
+    align-items: center;
+}
+
+.option .form-control {
+    margin-right: 10px;
+}
+#questionContainer {
+
+    margin-bottom: 5%;
+}  
+.q {
+    border: 0.6px solid black;
+    padding: 2%;
+}
+</style>
+{% endblock style %}
+{% block content %}
+    <div class="container">
+        <h1 id="quizName">{{ quiz.name }}</h1>
+        <a id="addQuestion" class="btn btn-primary btn-lg " href="#" role="button"> Add Question </a>
+        <button class="btn btn-success btn-lg " role="button" id="saveButton"> Save </button>
+        <br><br><br>
+        <div id="questionContainer">
+            
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+
+    var data = {{ q|safe }};
+
+    
+
+
+    var questionCount = 0;
+
+    $(document).ready(function() {
+        var questionContainer = $('#questionContainer');
+
+        Object.keys(data.questions).forEach(function(questionKey, index) {
+            var questionData = data.questions[questionKey];
+            var questionCount = index + 1;
+            var question = $(
+                '<div class="form-group q" id="question'+questionCount+'">'+
+                    '<label for="question">Question</label> <a class="btn btn-success btn-sm addOption" href="#" role="button"> Add Option </a>'+
+                    '<input type="text" class="form-control" id="question" name="question" placeholder="Enter question" value="'+questionData.questionText+'"><br>'+
+                '</div>'
+            );
+
+            questionData.options.forEach(function(optionData, index) {
+                var optionCount = index + 1;
+                question.append(
+                    '<div class="form-check option">'+
+                        '<input class="form-check-input" type="radio" id="option'+optionCount+'" name="option'+questionCount+'" value="'+optionCount+'"> &emsp; &emsp;'+
+                        '<input type="text" class="form-control" id="option'+optionCount+'" name="option'+optionCount+'_'+questionCount+'" placeholder="Enter option '+optionCount+'" value="'+optionData[0]+'">'+
+                    '</div>'
+                );
+            });
+
+            questionContainer.append(question);
+        });
+    });
+
+
+    $('#addQuestion').click(function(){
+        questionCount++;
+        var question = $(
+            '<div class="form-group q" id="question'+questionCount+'">'+
+                '<label for="question">Question</label> <a class="btn btn-success btn-sm addOption" href="#" role="button"> Add Option </a>'+
+                '<input type="text" class="form-control" id="question" name="question" placeholder="Enter question"><br>'+
+                '<div class="form-check option">'+
+                    '<input class="form-check-input" type="radio" id="option1" name="option'+questionCount+'" value="1"> &emsp; &emsp;'+
+                    '<input type="text" class="form-control" id="option1" name="option1'+questionCount+'" placeholder="Enter option 1">'+
+                '</div>'+
+            '</div>'
+        );
+        question.find('.addOption').click((function(currentQuestionCount){
+            return function(e){
+                e.preventDefault();
+                var optionCount = $(this).siblings('.option').length + 1;
+                $(this).siblings('.option').last().after(
+                    '<div class="form-check option">'+
+                        '<input class="form-check-input" type="radio" id="option'+optionCount+'" name="option'+currentQuestionCount+'" value="'+optionCount+'"> &emsp; &emsp;'+
+                        '<input type="text" class="form-control" id="option'+optionCount+'" name="option'+optionCount+'_'+currentQuestionCount+'" placeholder="Enter option '+optionCount+'">'+
+                    '</div>'
+                );
+            };
+        })(questionCount));
+        $('#questionContainer').append(question);
+    });
+
+    $('#saveButton').click(function(){
+        var quizName = $('#quizName').val();
+        console.log(quizName);
+        var questions = {};
+        $('.q').each(function(index){
+            var questionText = $(this).find('input[name="question"]').val();
+            var options = [];
+            $(this).find('.option').each(function(optionIndex){
+                var optionText = $(this).find('input[type="text"]').val();
+                var isChecked = $(this).find('input[type="radio"]').is(':checked') ? 1 : 0;
+                options.push([optionText, isChecked]);
+            });
+            questions['question'+(index+1)] = {
+                'questionText': questionText,
+                'options': options
+            };
+        });
+        const quiz1 = {
+            'quiz_name': "{{ quiz.name }}",
+            'questions': questions
+        };
+        $.ajax({
+            url: '/quiz_detail/{{quiz.id}}/save/',
+            type: 'POST',
+            data: JSON.stringify(quiz1),
+            contentType: 'application/json',
+            success: function(response){
+                console.log(response);
+            }
+        });
+    });
+    
+</script>
+{% endblock script %}
